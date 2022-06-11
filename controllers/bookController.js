@@ -270,8 +270,6 @@ exports.book_update_post = [
     }
 ];
 
-
-// Display book update form on GET.
 exports.book_delete_get = function(req, res, next) {
     async.parallel({
         book: function(callback) {
@@ -289,7 +287,6 @@ exports.book_delete_get = function(req, res, next) {
     })
 };
 
-// Handle book update on POST.
 exports.book_delete_post = function(req, res, next) {
     async.parallel({
         book: function(callback) {
