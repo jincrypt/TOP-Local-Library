@@ -187,9 +187,9 @@ exports.author_update_post = [
             res.render('author_form', {title: 'Update Author', author: author, errors: errors.array() });
             return;
         } else {
-            Author.findByIdAndUpdate(req.params.id, author, {}, function (err, theauthor) {
+            Author.findByIdAndUpdate(req.params.id, author, {}, function (err, result) {
                 if (err) {return next(err);}
-                res.redirect(theauthor.url);
+                res.redirect(result.url);
             });
         }
 
