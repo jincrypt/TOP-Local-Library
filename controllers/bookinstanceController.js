@@ -123,11 +123,36 @@ exports.bookinstance_delete_post = function(req, res, next) {
 };
 
 // Display BookInstance update form on GET.
-exports.bookinstance_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: BookInstance update GET');
+exports.bookinstance_update_get = function(req, res, next) {
+    async.parallel({
+        book_instance: function(callback) {
+            BookInstance.findById(req.params.id).populate('book').exec(callback)
+        },
+        books: function(callback) {
+            Book.find(callback)
+        },
+
+    }, function(err, results) {
+        if (err) { return next(err) }
+        if (results.book_instance==null) {
+            var err = new Error('Book Instance not found');
+            err.status = 404;
+            return next(err);
+        }
+        res.render('bookinstance_form', {title: 'Update Book Instance', book_list: results.books, selected_book: results.book_instance.book._id, bookinstance: results.book_instance})
+    });
 };
 
 // Handle bookinstance update on POST.
-exports.bookinstance_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: BookInstance update POST');
-};
+exports.bookinstance_update_post = [
+    // body('book')
+    // body('imprint')
+    // body('status')
+    // body('due_back', 'Invalid due back date').optional( checkFalsy: true ).isISO8601().toDate(),
+
+
+    // book: { type: Schema.Types.ObjectId, ref: 'Book', required: true }, //reference to the associated book
+    // imprint: {type: String, required: true},
+    // status: {type: String, required: true, enum: ['Available', 'Maintenance', 'Loaned', 'Reserved'], default: 'Maintenance'},
+    // due_back: {type: Date, default: Date.now}
+]
