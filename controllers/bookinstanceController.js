@@ -145,14 +145,36 @@ exports.bookinstance_update_get = function(req, res, next) {
 
 // Handle bookinstance update on POST.
 exports.bookinstance_update_post = [
-    // body('book')
-    // body('imprint')
-    // body('status')
-    // body('due_back', 'Invalid due back date').optional( checkFalsy: true ).isISO8601().toDate(),
+    body('book', 'Book must be specified').trim().isLength({ min: 1 }).escape(),
+    body('imprint', 'Imprint must be specified').trim().isLength({ min: 1 }).escape(),
+    body('status').escape(),
+    body('due_back', 'Invalid due back date').optional({ checkFalsy: true }).isISO8601().toDate(),
 
+    (req, res, next) => {
+        const errors = validationResult(req);
 
-    // book: { type: Schema.Types.ObjectId, ref: 'Book', required: true }, //reference to the associated book
-    // imprint: {type: String, required: true},
-    // status: {type: String, required: true, enum: ['Available', 'Maintenance', 'Loaned', 'Reserved'], default: 'Maintenance'},
-    // due_back: {type: Date, default: Date.now}
+        var book_instance = new BookInstance(
+            {
+                book: req.body.book,
+                imprint: req.body.imprint,
+                status: req.body.status,
+                due_back: req.body.due_back,
+                _id: req.params.id
+            }
+        );
+
+        if (!errors.isEmpty()) {
+            Book.find({}, 'title').exec(function(err, books) {
+                if (err) { return next(err); }
+                
+            res.render('bookinstance_form', {title: 'Update Book Instance', book_list: books, selected_book: book_instance.book._id, bookinstance: book_instance, errors: errors.array()})
+            })
+        } else {
+            BookInstance.findByIdAndUpdate(req.params.id, book_instance, {}, function(err, results) {
+                if (err) { return next(err) }
+                res.redirect(results.url)
+            })
+        }
+    }
+
 ]
