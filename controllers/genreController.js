@@ -159,6 +159,27 @@ exports.genre_update_get = function(req, res, next) {
 };
 
 // Handle Genre update on POST.
-exports.genre_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Genre update POST');
-};
+exports.genre_update_post = [
+  body('name').trim().isLength({ min: 3 }).escape().withMessage('Genre name must be at least 3 characters long.'),
+  
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    var genre = new Genre(
+      {
+        name: req.body.name,
+        _id:req.params.id
+      }
+    );
+
+    if (!errors.isEmpty()) {
+      res.render('genre_form', {title: 'Update Genre', genre: genre, errors: errors.array() })
+      return;
+    } else {
+      Genre.findByIdAndUpdate(req.params.id, genre, {}, function (err, result) {
+        if (err) {return next(err);}
+        res.redirect(result.url);
+      });
+    }
+  }
+]
