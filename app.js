@@ -11,6 +11,7 @@ var usersRouter = require('./routes/users');
 var catalogRouter = require('./routes/catalog');
 
 var compression = require('compression');
+var helmet = require('helmet');
 
 //Set up mongoose connection
 mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true});
@@ -19,6 +20,8 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
 var app = express();
+
+app.use(helmet());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
