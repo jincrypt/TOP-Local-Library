@@ -1,6 +1,9 @@
 {
   "name": "top-local-library",
   "version": "0.0.0",
+  "engines": {
+    "node": "16.13.0"
+  },
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -14,7 +17,7 @@
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "express-validator": "^6.14.1",
-    "helmet": "^5.1.0",
+    "helmet": "^5.1.1",
     "http-errors": "~1.6.3",
     "luxon": "^2.4.0",
     "mongoose": "^6.3.2",
